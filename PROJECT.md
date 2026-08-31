@@ -63,30 +63,26 @@ TCP.
 
 Allow the client and server to send data to each other.
 
-### Milestone 5: Create the Basic Question-and-Answer Flow
+### Milestone 5: Set Up PostgreSQL Databases and Practise SQL
 
-Allow the client to send a question and the server to return an answer.
+Create the databases needed by the client and server and practise basic SQL
+and CRUD operations.
 
-### Milestone 6: Set Up PostgreSQL Databases
-
-Create the databases needed by the client and server and practise basic CRUD
-operations.
-
-### Milestone 7: Connect C++ to PostgreSQL
+### Milestone 6: Access PostgreSQL from C++ Using pqxx
 
 Use pqxx to let the client and server access their databases.
 
-### Milestone 8: Integrate the Complete Data Flow
+### Milestone 7: Integrate the Complete Data Flow
 
 Connect the client database, client, TCP communication, server, and server
 database into one working flow.
 
-### Milestone 9: Handle Basic Errors
+### Milestone 8: Handle Basic Errors
 
 Handle the basic failure cases encountered during TCP communication and
 database operations.
 
-### Milestone 10: Complete Tier 1
+### Milestone 9: Complete Tier 1
 
 Organize the build, launch, and development workflow and confirm that the
 project can be built and run from the beginning.
