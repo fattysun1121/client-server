@@ -20,8 +20,7 @@ The project is also intended to develop:
 - PostgreSQL and DB skills (CRUD, pqxx)
 - tmux and bash script skills
 
-The exact role of sessions, multithreading, and PostgreSQL is not yet
-finalized.
+The exact role of sessions and multithreading is not yet finalized.
 
 ## 2. Confirmed Scope
 
@@ -63,26 +62,24 @@ TCP.
 
 Allow the client and server to send data to each other.
 
-### Milestone 5: Set Up PostgreSQL Databases and Practise SQL
+### Milestone 5: Set Up PostgreSQL Databases
 
-Create the databases needed by the client and server and practise basic SQL
-and CRUD operations.
+Create the databases and tables needed by the client and server, load basic
+data, and briefly practise CRUD operations to confirm that the database setup
+works.
 
-### Milestone 6: Access PostgreSQL from C++ Using pqxx
+### Milestone 6: Integrate PostgreSQL into the Client and Server Using pqxx
 
-Use pqxx to let the client and server access their databases.
+Modify the existing client and server applications to use pqxx. The client reads
+a question from the client database and sends it over TCP. The server looks up
+the corresponding answer in the server database and sends the answer back.
 
-### Milestone 7: Integrate the Complete Data Flow
-
-Connect the client database, client, TCP communication, server, and server
-database into one working flow.
-
-### Milestone 8: Handle Basic Errors
+### Milestone 7: Handle Basic Errors
 
 Handle the basic failure cases encountered during TCP communication and
 database operations.
 
-### Milestone 9: Complete Tier 1
+### Milestone 8: Complete Tier 1
 
 Organize the build, launch, and development workflow and confirm that the
 project can be built and run from the beginning.
