@@ -6,6 +6,8 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+#include <pqxx/pqxx>
+
 
 /**  
  * The basic routine is: server will wait for a connection,
@@ -21,6 +23,51 @@ void die(std::string operation) {
         << std::strerror(errno) << std::endl; 
     std::exit(EXIT_FAILURE);
 }
+
+void processClient(int conn_fd) {
+    std::array<char, 1024> buf{};
+    const ssize_t bytes_received = recv(conn_fd, buf.data(), buf.size(), 0);
+    if (bytes_received == -1) {
+        close(conn_fd);
+        die("recv");
+    } else if (bytes_received > 0) {
+        const std::string question(buf.data(), bytes_received);
+        std::cout << "Received " << question << std::endl;
+        std::cout << "Checking answer from db..." <<std::endl;
+
+        /**
+         * Use pqxx to look up answer
+         * 
+         * 1. Connect to db server with pqxx::conneciton
+         * 2. Create a transaction object on the connection (pqxx::work)
+         * 3. Use transaction's exec, query_value, and stream funcitons to execute SQL statements
+         * 4. Access the pqxx::result object returned by the above functions
+         * 5. Call the transaction's commit function to finalize the work
+         * 
+         * Note: the connection is free to run a next transaction after current transaction is closed
+         */
+
+        const std::string conn_str{"dbname=server_db"};
+        pqxx::connection cx{conn_str};
+        pqxx::work tx(cx);
+        
+        
+        pqxx::result r = tx.exec("SELECT answer FROM answers WHERE question = $1",
+            pqxx::params{question});
+
+        tx.commit();
+
+        std::string ans{"No answer in DB!"}; 
+
+        if (!r.empty()) {
+            ans = r[0][0].as<std::string>();
+        }
+        send(conn_fd, ans.data(), ans.size(), 0);
+
+    }
+    close(conn_fd);
+}
+
 
 int main() {
     // classic socket-bind-listen-accept pattern.
@@ -62,16 +109,7 @@ int main() {
             }
             die("accept");
         }
-        std::array<char, 1024> buf{};
-        const ssize_t bytes_received = recv(conn_fd, buf.data(), buf.size(), 0);
-        if (bytes_received == -1) {
-            close(conn_fd);
-            die("recv");
-        } else if (bytes_received > 0) {
-            std::cout << "Received " << std::string(buf.data(), bytes_received) << std::endl;
-            send(conn_fd, buf.data(), bytes_received, 0);
-        }
-        close(conn_fd);
+        processClient(conn_fd);
     }
 }
 

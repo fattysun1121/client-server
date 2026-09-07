@@ -65,9 +65,9 @@ int main() {
         die("send");
     }
 
-    std::string received(in.size(), ' ');
+    std::string received(1024, '\0');
     const ssize_t bytes_received = recv(client_fd, received.data(), received.size(), 0);
-    if (bytes_received != in.size()) {
+    if (bytes_received < 0) {
         close(client_fd);
         die("recv");
     } else {
