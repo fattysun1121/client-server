@@ -20,7 +20,9 @@ The project is also intended to develop:
 - PostgreSQL and DB skills (CRUD, pqxx)
 - tmux and bash script skills
 
-The exact role of sessions and multithreading is not yet finalized.
+An additional demo will run one client and one server on separate threads in a
+single process. Session behavior and concurrent handling of multiple clients
+remain **TBD**.
 
 ## 2. Confirmed Scope
 
@@ -29,7 +31,9 @@ The exact role of sessions and multithreading is not yet finalized.
 - The entire program runs on one Linux computer.
 - The baseline contains one client program.
 - The baseline contains one server program.
-- The client and server are separate processes.
+- The standalone client and server run as separate processes.
+- An additional demo runs the same Client and Server classes on separate threads
+  in a single process, still communicating over TCP.
 - The client and server exchange data in both directions.
 
 ### 2.2 Technical learning constraints
@@ -37,7 +41,8 @@ The exact role of sessions and multithreading is not yet finalized.
 - C++ is the implementation language
 - Linux is the target operating system
 - Client-server socket programming must be learned and demonstrated
-- Multithreading must be learned and used; its responsibility is **TBD**
+- Multithreading is used in the integrated demo, including startup synchronization
+  and coordinated shutdown
 - PostgreSQL and DB must be learned
 - cmake must be used to build the project
 - tmux and bash scripts are used to develop and/or launch the project
@@ -74,15 +79,32 @@ Modify the existing client and server applications to use pqxx. The client reads
 a question from the client database and sends it over TCP. The server looks up
 the corresponding answer in the server database and sends the answer back.
 
-### Milestone 7: Handle Basic Errors
+### Milestone 7: Encapsulate the Client and Server into Classes
 
-Handle the basic failure cases encountered during TCP communication and
-database operations.
+Create Client and Server classes, each with a header and implementation file.
+Keep separate client_main.cpp and server_main.cpp entry points so both programs
+can still run independently. Preserve the existing database-backed question and
+answer behavior, and define socket ownership and cleanup responsibilities.
 
-### Milestone 8: Complete Tier 1
+### Milestone 8: Handle Basic Errors
 
-Organize the build, launch, and development workflow and confirm that the
-project can be built and run from the beginning.
+Handle empty query results, database exceptions, socket send/receive failures,
+and peer disconnections. Handle partial sends and receives, report errors
+clearly, and release resources on failure.
+
+### Milestone 9: Build a Multithreaded Integration Demo
+
+Add demo_main.cpp to run one Client and one Server on separate threads in a
+single process while preserving the standalone executables. Synchronize startup
+so the server is ready before the client connects. After the exchange, stop the
+server and join all threads without hanging on a blocking accept().
+Concurrent handling of multiple clients remains **TBD**.
+
+### Milestone 10: Complete Tier 1
+
+Document the build, database initialization, and launch workflow in the README.
+Verify that the standalone client/server programs and the integrated demo can
+be built and run by following those instructions.
 
 ## 4. After Tier 1
 
