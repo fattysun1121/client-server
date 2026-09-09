@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cstring>
 #include <array>
@@ -7,6 +6,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+#include<pqxx/pqxx>
 
 /**
  * Client workflow:
@@ -25,6 +25,7 @@
  * 12. close()
  */
 
+ #define DB_SIZE 3
 
 constexpr int SERVER_PORT = 8080;
 
@@ -53,15 +54,16 @@ int main() {
         die("connect");
     }
 
-    // for prototying, ask for user input, send server the input
-    // and server will output the same thing
+    // Retrive a question from client_db
+    pqxx::connection cx{"dbname=client_db"};
+    pqxx::work tx(cx);
+    pqxx::result r = tx.exec("SELECT question FROM questions ORDER BY random() LIMIT 1");
 
-    std::cout << "Give me something: ";
-    std::string in; 
-    getline(std::cin, in);  // get user input
+    tx.commit();
 
-    std::cout << "Sending " << in << "..." << std::endl;
-    if (send(client_fd, in.data(), in.size(), 0) != in.size()) {
+    std::string question{r[0][0].as<std::string>()};
+    std::cout << "I will ask this question: " << question << std::endl;
+    if (send(client_fd, question.data(), question.size(), 0) != question.size()) {
         die("send");
     }
 

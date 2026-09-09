@@ -47,8 +47,7 @@ void processClient(int conn_fd) {
          * Note: the connection is free to run a next transaction after current transaction is closed
          */
 
-        const std::string conn_str{"dbname=server_db"};
-        pqxx::connection cx{conn_str};
+        pqxx::connection cx{"dbname=server_db"};
         pqxx::work tx(cx);
         
         
