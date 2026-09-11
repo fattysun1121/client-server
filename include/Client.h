@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
-#include<pqxx/pqxx>
+#include <pqxx/pqxx>
 
 #pragma once
 
@@ -37,10 +37,10 @@ public:
     Client();
     void run();
 private:
-    void connect();
+    static void die(std::string);
+    void connectToServer();
     std::string getQuestion();
-    void sendQuestion(std::string&);
-    void receiveAnswer();
+    std::string getAnswer(std::string&);
     void closeConnection();
     int client_fd;
 };
