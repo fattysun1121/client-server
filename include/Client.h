@@ -39,8 +39,8 @@ public:
 private:
     static void die(std::string);
     void connect_to_server();
-    std::string get_question();
-    std::string get_answer(std::string&);
+    std::string get_question_from_db();
+    std::string get_answer_from_server(std::string&);
     void close_connection();
     int client_fd;
 };

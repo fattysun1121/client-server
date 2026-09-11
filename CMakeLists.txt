@@ -23,7 +23,7 @@ add_executable(Client)
 
 target_sources(Server
     PRIVATE
-        src/Server.cpp # src/run_server.cpp
+        src/Server.cpp src/run_server.cpp
     PRIVATE 
         FILE_SET HEADERS
         BASE_DIRS 

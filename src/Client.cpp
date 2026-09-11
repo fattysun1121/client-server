@@ -1,4 +1,4 @@
-#include <Client.h>
+#include "Client.h"
 
 
 Client::Client() {
@@ -10,10 +10,10 @@ Client::Client() {
 
 void Client::run() {
     connect_to_server();
-    std::string question = get_question();
+    std::string question = get_question_from_db();
     std::cout << "I will ask this question: " << question << std::endl;
 
-    std::string answer = get_answer(question);
+    std::string answer = get_answer_from_server(question);
     std::cout << answer << std::endl;
     close_connection();
 }
@@ -30,7 +30,7 @@ void Client::connect_to_server() {
     }
 }
 
-std::string Client::get_question() {
+std::string Client::get_question_from_db() {
     // Retrive a question from client_db
     pqxx::connection cx{"dbname=client_db"};
     pqxx::work tx(cx);
@@ -44,7 +44,7 @@ std::string Client::get_question() {
     return question;   
 }
 
-std::string Client::get_answer(std::string& question) {
+std::string Client::get_answer_from_server(std::string& question) {
     if (send(client_fd, question.data(), question.size(), 0) != question.size()) {
         die("send");
     }

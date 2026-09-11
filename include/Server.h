@@ -24,8 +24,8 @@ public:
     void run();
 private:
     static void die(std::string);
-    void process_client();
-    std::string get_question();
-    std::string get_answer(std::string);
+    void process_client(int);
+    std::string get_question_from_client(int);
+    std::string get_answer_from_db(std::string&);
     int socket_fd;
-}
+};
