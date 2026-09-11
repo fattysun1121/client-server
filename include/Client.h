@@ -38,9 +38,9 @@ public:
     void run();
 private:
     static void die(std::string);
-    void connectToServer();
-    std::string getQuestion();
-    std::string getAnswer(std::string&);
-    void closeConnection();
+    void connect_to_server();
+    std::string get_question();
+    std::string get_answer(std::string&);
+    void close_connection();
     int client_fd;
 };

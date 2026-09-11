@@ -9,16 +9,16 @@ Client::Client() {
 }
 
 void Client::run() {
-    connectToServer();
-    std::string question = getQuestion();
+    connect_to_server();
+    std::string question = get_question();
     std::cout << "I will ask this question: " << question << std::endl;
 
-    std::string answer = getAnswer(question);
+    std::string answer = get_answer(question);
     std::cout << answer << std::endl;
-    closeConnection();
+    close_connection();
 }
 
-void Client::connectToServer() {
+void Client::connect_to_server() {
     sockaddr_in server_addr{};  // the zero initializer '{}' is needed, it zeroes everything out (like memset in C)
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(SERVER_PORT);
@@ -30,7 +30,7 @@ void Client::connectToServer() {
     }
 }
 
-std::string Client::getQuestion() {
+std::string Client::get_question() {
     // Retrive a question from client_db
     pqxx::connection cx{"dbname=client_db"};
     pqxx::work tx(cx);
@@ -44,7 +44,7 @@ std::string Client::getQuestion() {
     return question;   
 }
 
-std::string Client::getAnswer(std::string& question) {
+std::string Client::get_answer(std::string& question) {
     if (send(client_fd, question.data(), question.size(), 0) != question.size()) {
         die("send");
     }
@@ -59,7 +59,7 @@ std::string Client::getAnswer(std::string& question) {
     return received;
 }
 
-void Client::closeConnection() {
+void Client::close_connection() {
     close(client_fd);
 }
 

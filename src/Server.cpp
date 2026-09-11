@@ -1,12 +1,42 @@
 #include <Server.h>
 
-void die(std::string operation) {
+Server::Server() {
+    // classic socket-bind-listen-accept pattern.
+    std::cout << "Creating server socket" << std::endl;
+
+    // create a TCP socket
+    socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket_fd == -1) {
+        die("socket");
+    }
+    
+    int on = 1;
+    if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
+        die("setsocketopt");
+    }
+    sockaddr_in server_addr{};  // the zero initializer '{}' is needed, it zeroes everything out (like memset in C)
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(SERVER_PORT);
+    server_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+
+    // bind the socket
+    if (bind(socket_fd, reinterpret_cast<sockaddr *>(&server_addr), sizeof(server_addr)) == -1) {
+        die("bind");
+    }
+}
+
+void Server::run() {
+
+    
+}
+void Server::die(std::string operation) {
     std::cerr << operation << ": " 
         << std::strerror(errno) << std::endl; 
     std::exit(EXIT_FAILURE);
 }
 
-void processClient(int conn_fd) {
+
+void process_client(int conn_fd) {
     std::array<char, 1024> buf{};
     const ssize_t bytes_received = recv(conn_fd, buf.data(), buf.size(), 0);
     if (bytes_received == -1) {
@@ -51,38 +81,17 @@ void processClient(int conn_fd) {
 
 
 int main() {
-    // classic socket-bind-listen-accept pattern.
-    std::cout << "Creating server socket" << std::endl;
-
-    // create a TCP socket
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd == -1) {
-        die("socket");
-    }
     
-    int on = 1;
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
-        die("setsocketopt");
-    }
-    sockaddr_in server_addr{};  // the zero initializer '{}' is needed, it zeroes everything out (like memset in C)
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(SERVER_PORT);
-    server_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-
-    // bind the socket
-    if (bind(server_fd, reinterpret_cast<sockaddr *>(&server_addr), sizeof(server_addr)) == -1) {
-        die("bind");
-    }
 
     // starts listening
-    if (listen(server_fd, 10) == -1) {
+    if (listen(socket_fd, 10) == -1) {
         die("listen");
     }
     std::cout << "Server listening on 127.0.0.1:" << SERVER_PORT << '\n';
 
     // accepts connection
     while (true) {
-        const int conn_fd = accept(server_fd, nullptr, nullptr);
+        const int conn_fd = accept(socket_fd, nullptr, nullptr);
         if (conn_fd == -1) {
             // EINTR is interrupt, resume if err due to interruption
             if (errno == EINTR) {
@@ -90,7 +99,7 @@ int main() {
             }
             die("accept");
         }
-        processClient(conn_fd);
+        process_client(conn_fd);
     }
 }
 

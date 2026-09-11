@@ -17,3 +17,15 @@
  */
 
 constexpr int SERVER_PORT = 8080;
+
+class Server {
+public:
+    Server();
+    void run();
+private:
+    static void die(std::string);
+    void process_client();
+    std::string get_question();
+    std::string get_answer(std::string);
+    int socket_fd;
+}
